@@ -22,6 +22,41 @@ First, make sure you have installed [Node.js](https://nodejs.org/) (the latest s
 ```bash
 git clone https://github.com/yourusername/puppeteer-page.git
 cd job-information-crawler
+```
+
+## Usage
+
+### input your linkedin / seek account and password in the `.env` file.
+```bash
+# .env file
+LINKEDIN_EMAIL='your_linkedin_email'
+LINKEDIN_PASSWORD='your_linkedin_password'
+SEEK_EMAIL='your_seek_email'
+SEEK_PASSWORD='your_seek_password'
+```
+
+### Install
+```bash
 npm install
 npm run start
+```
+
+## Search Guide
+```javascript
+{
+  // linkedin/seek account
+  username: process.env.SEEK_EMAIL!,
+  // linkedin/seek password
+  password: process.env.SEEK_PASSWORD!,
+  // search keywords
+  keywords: 'developer engineer | remote',
+  // search location
+  location: 'Australia',
+  // search job title includes these keywords
+  titleIncludes: 'senior',
+  // skip job descriptions with these keywords
+  ignores: ['citizen'],
+  // how many pages to search
+  pages: 1,
+}
 ```

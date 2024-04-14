@@ -1,37 +1,38 @@
 import { wait } from '../utils';
-import { ISearchParams, ISearchResult } from '../types';
+import { ISearchParams, ISearchResult, ISearchResultCallback } from '../types';
 import { Page } from 'puppeteer';
 
-type IJobSearch = Pick<ISearchParams, 'position' | 'location' | 'pages' | 'titleIncludes' | 'ignores'>;
+type IJobSearch = Pick<ISearchParams, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores'>;
 
 class JobSearch {
   page: any;
-  position: string;
+  keywords: string;
   location: string;
   titleIncludes: string;
   ignores: string[];
   pages: number;
+  thereAreMore: boolean = true;
 
   constructor({
     page,
-    position,
+    keywords,
     location,
     titleIncludes,
     ignores,
     pages
   }: IJobSearch & { page: Page }) {
     this.page = page;
-    this.position = position;
+    this.keywords = keywords;
     this.location = location;
-    this.titleIncludes = titleIncludes;
-    this.ignores = ignores;
-    this.pages = pages;
+    this.titleIncludes = titleIncludes || '';
+    this.ignores = ignores || [];
+    this.pages = pages || 1;
   }
   // game_children_challenge
-  async search() {
+  async search(cb: ISearchResultCallback) {
     await this.page.goto('https://www.linkedin.com/jobs/', { waitUntil: 'load' });
     await this.page.waitForSelector('input.jobs-search-box__text-input', { timeout: 1000000 });
-    await this.page.type('input.jobs-search-box__text-input', this.position);
+    await this.page.type('input.jobs-search-box__text-input', this.keywords);
     await wait();
     await this.page.type('input.jobs-search-box__text-input[autocomplete="address-level2"]', this.location);
     await wait();
@@ -39,13 +40,12 @@ class JobSearch {
     await this.page.waitForNavigation({ waitUntil: 'load' });
 
     // search job result
-    return await this.loadJobList();
+    return await this.loadJobList(cb);
   }
 
-  async loadJobList(): Promise<ISearchResult[]> {
+  async loadJobList(cb: ISearchResultCallback): Promise<void> {
     let pageNum = 1;
-    const jobLists: ISearchResult[] = [];
-    while (pageNum <= this.pages) {
+    while (this.thereAreMore && pageNum <= this.pages) {
       try {
         await wait(3000);
         const jobs = await this.page.evaluate(async (titleIncludes: string, ignores: string[]) => {
@@ -67,7 +67,7 @@ class JobSearch {
               // Company name, number of applicants, release time
               const jobInfo = (document.querySelector('.job-details-jobs-unified-top-card__primary-description-without-tagline') as HTMLElement)?.innerText;
               const elements = Array.from(document.querySelectorAll('li.job-details-jobs-unified-top-card__job-insight')) || [];
-              // Company size, position type
+              // Company size, keywords type
               const componyInfo = elements.slice(0, 2).map(el => (el as HTMLElement).innerText);
               const data = {
                 jobTitle,
@@ -92,7 +92,7 @@ class JobSearch {
           }
           return jobList;
         }, this.titleIncludes, this.ignores);
-        jobLists.push(...jobs);
+        cb && cb(jobs);
         // next page
         await this.nextpage(++pageNum);
       } catch (error: any) {
@@ -100,25 +100,31 @@ class JobSearch {
         throw new Error(error);
       }
     }
-    return jobLists;
   }
 
   async nextpage(pageNum: number) {
+    console.log('pageNum: ', pageNum);
     const paginationList = await this.page.$$('.artdeco-pagination__pages li');
     for (let i = 0; i < paginationList.length; i++) {
       const li = paginationList[i];
       const value = await li.evaluate((
         node: { getAttribute: (arg0: string) => any; }
       ) => node.getAttribute('data-test-pagination-page-btn'));
-      /**
-       * The hard coding here is 9 because the paging of LinkedIn’s job search page can display up to 9 pages at a time.
-      */
-      if (pageNum === 9 && !value) {
+      if (Number(value) == pageNum) {
         await li.click();
         break;
       }
-      if (Number(value) == pageNum) {
+      // if the page number is greater than the number of pages, click the last page button
+      if ((i + 1) >= pageNum && !value) {
         await li.click();
+        break;
+      }
+      const lastItem = paginationList[paginationList.length - 1]
+      const lastItemValue = await lastItem.evaluate((
+        node: { getAttribute: (arg0: string) => any; }
+      ) => node.getAttribute('data-test-pagination-page-btn'));
+      if (Number(lastItemValue) < pageNum) {
+        this.thereAreMore = false
         break;
       }
     }

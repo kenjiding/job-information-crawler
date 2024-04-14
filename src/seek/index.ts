@@ -7,8 +7,9 @@ export default class Seek extends Base {
   constructor({
     username,
     password,
-    position,
+    keywords,
     location,
+    filename = 'seek',
     titleIncludes,
     ignores,
     pages = 10,
@@ -16,10 +17,11 @@ export default class Seek extends Base {
     super({
       username,
       password,
-      position,
+      keywords,
       location,
       titleIncludes,
       ignores,
+      filename,
       pages
     });
   }
@@ -32,16 +34,17 @@ export default class Seek extends Base {
       password: this.password,
     }).run();
 
-    const jobLists = await new JobSearch({
+    await new JobSearch({
       page: this.page,
-      position: this.position,
+      keywords: this.keywords,
       location: this.location,
       titleIncludes: this.titleIncludes,
       ignores: this.ignores,
       pages: this.pages,
-    }).search();
-    // write jobs to csv file
-    this.saveJobs('seek', jobLists);
+    }).search((data) => {
+      // write jobs to csv file
+      this.saveJobs(data);
+    });
 
     await this.browserClose();
   }

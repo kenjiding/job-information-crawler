@@ -3,11 +3,12 @@
 export interface ISearchParams {
   username: string;
   password: string;
-  position: string;
+  keywords: string;
   location: string;
-  titleIncludes: string;
-  ignores: string[];
-  pages: number;
+  titleIncludes?: string;
+  filename?: string;
+  ignores?: string[];
+  pages?: number;
 }
 
 export interface ISearchResult {
@@ -18,3 +19,5 @@ export interface ISearchResult {
   jobInfo: string;
   componyInfo: string;
 }
+
+export type ISearchResultCallback = (searchRes: ISearchResult[]) => any;

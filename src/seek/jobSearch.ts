@@ -1,12 +1,12 @@
 import { wait } from '../utils';
-import { ISearchParams, ISearchResult } from '../types';
+import { ISearchParams, ISearchResult, ISearchResultCallback } from '../types';
 import { Page } from 'puppeteer';
 
-type IJobSearch = Pick<ISearchParams, 'position' | 'location' | 'pages' | 'titleIncludes' | 'ignores'>;
+type IJobSearch = Pick<ISearchParams, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores'>;
 
 class JobSearch {
   page: any;
-  position: string;
+  keywords: string;
   location: string;
   titleIncludes: string;
   ignores: string[];
@@ -14,18 +14,18 @@ class JobSearch {
 
   constructor({
     page,
-    position,
+    keywords,
     location,
     titleIncludes,
     ignores,
     pages
   }: IJobSearch & { page: Page }) {
     this.page = page;
-    this.position = position;
+    this.keywords = keywords;
     this.location = location;
-    this.titleIncludes = titleIncludes;
-    this.ignores = ignores;
-    this.pages = pages;
+    this.titleIncludes = titleIncludes || '';
+    this.ignores = ignores || [];
+    this.pages = pages || 1;
   }
 
   // grabJobInfo function to get the job details
@@ -33,7 +33,6 @@ class JobSearch {
     await this.page.waitForSelector('div[data-automation="searchResults"]', { visible: true });
     const articles = await this.page.$$(`a[data-automation="jobTitle"]`);
     const length = articles.length;
-    console.log('length: ', length);
     const results: ISearchResult[] = [];
     let nums = 0;
     while (nums < length) {
@@ -75,30 +74,26 @@ class JobSearch {
   }
 
   // search function to get the first page of job list
-  async search(): Promise<ISearchResult[]> {
-    await this.page.type('#keywords-input', this.position);
+  async search(cb: ISearchResultCallback): Promise<void> {
+    await this.page.type('#keywords-input', this.keywords);
     await wait();
     await this.page.type('#SearchBar__Where', this.location);
     await this.page.click('button[type="submit"]');
-    const res = await this.nextpage();
-    return res;
+    await this.nextpage(cb);
   }
 
   // nextpage function to get all the job details
-  async nextpage() {
-    const jobLists = [];
+  async nextpage(cb: ISearchResultCallback) {
     let curPage = 1;
     while(curPage <= this.pages) {
       const res = await this.grabJobInfo();
-      jobLists.push(...res);
+      cb && cb(res);
       const nextLink = await this.page.$('a[title="Next"][aria-label="Next"]');
       if (!nextLink) break;
       await nextLink.click();
       await wait(1000);
       curPage++;
     }
-
-    return jobLists;
   }
 }
 

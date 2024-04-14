@@ -6,35 +6,66 @@ import { ISearchParams, ISearchResult } from "./types";
 export default class Base {
   browser!: Browser;
   page!: Page;
+  private csvWriter!: any;
 
   username: string;
   password: string;
-  position: string;
+  keywords: string;
   location: string;
   titleIncludes: string;
   ignores: string[];
   pages: number;
+  filename: string;
 
   constructor({
     username,
     password,
-    position,
+    keywords,
     location,
+    filename,
     titleIncludes,
     ignores,
     pages = 10,
   }: ISearchParams) {
     this.username = username;
     this.password = password;
-    this.position = position;
+    this.keywords = keywords;
     this.location = location;
-    this.titleIncludes = titleIncludes;
-    this.ignores = ignores;
-    this.pages = pages;
+    this.filename = filename || '';
+    this.titleIncludes = titleIncludes || '';
+    this.ignores = ignores || [];
+    this.pages = pages || 1;
+    this.creatCsvWriter();
+  }
+
+  creatCsvWriter() {
+    const date = dayjs().format("YYYY-MM-DD HH:mm")
+    this.csvWriter = createObjectCsvWriter({
+      path: `${this.filename}_${date}.csv`,
+      append: true,
+      header: [
+        {id: 'jobTitle', title: 'Job Title'},
+        {id: 'companyName', title: 'Company Name'},
+        {id: 'jobLocation', title: 'Job Location'},
+        {id: 'jobInfo', title: 'job info'},
+        {id: 'componyInfo', title: 'compony info'},
+        {id: 'jobDescription', title: 'job Description'}
+      ]
+    });
+  }
+
+  async checkParams() {
+    if (!this.username) {
+      throw new Error('Linkedin / Seek username is required');
+    }
+    if (!this.password) {
+      throw new Error('Linkedin / Seek password is required');
+    }
   }
 
   // start the browser and page
   async start() {
+    await this.checkParams();
     this.browser = await puppeteer.launch({ headless: false, args: ['--start-maximized'] });
     this.page = await this.browser.newPage();
     await this.page.setViewport({ width: 1366, height: 768 });
@@ -45,22 +76,9 @@ export default class Base {
     await this.browser.close();
   }
 
-  async saveJobs(filename = 'jobs', jobLists: ISearchResult[]) {
-    const date = dayjs().format("YYYY-MM-DD HH:mm")
-    const csvWriter = createObjectCsvWriter({
-      path: `${filename}_${date}.csv`,
-      header: [
-        {id: 'jobTitle', title: 'Job Title'},
-        {id: 'companyName', title: 'Company Name'},
-        {id: 'jobLocation', title: 'Job Location'},
-        {id: 'jobInfo', title: 'job info'},
-        {id: 'componyInfo', title: 'compony info'},
-        {id: 'jobDescription', title: 'job Description'}
-      ]
-    });
-
+  async saveJobs(jobLists: ISearchResult[]) {
     // write jobs to csv file
-    await csvWriter.writeRecords(jobLists)
+    await this.csvWriter.writeRecords(jobLists)
     .then(() => console.log('\x1b[1m\x1b[34m', 'Data has been written into CSV file successfully.', '\x1b[0m'));
 
   }

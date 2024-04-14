@@ -1,25 +1,27 @@
 import Login from './login';
 import JobSearch from './jobSearch';
-import { ISearchParams } from '../types';
+import { ISearchParams, ISearchResult } from '../types';
 import Base from '../base';
 
 export default class LinkedinSearch extends Base {
   constructor({
     username,
     password,
-    position,
+    keywords,
     location,
     titleIncludes,
     ignores,
+    filename = 'linkdidn',
     pages = 10,
   }: ISearchParams) {
     super({
       username,
       password,
-      position,
+      keywords,
       location,
       titleIncludes,
       ignores,
+      filename,
       pages
     });
   }
@@ -34,17 +36,18 @@ export default class LinkedinSearch extends Base {
       password: this.password,
     }).run();
     // search for jobs
-    const jobLists = await new JobSearch({
+    await new JobSearch({
       page: this.page,
-      position: this.position,
+      keywords: this.keywords,
       location: this.location,
       pages: this.pages,
       titleIncludes: this.titleIncludes,
       ignores: this.ignores,
-    }).search();
+    }).search((res: ISearchResult[]) => {
+      // write jobs to csv file
+      this.saveJobs(res);
+    });
 
-    // write jobs to csv file
-    this.saveJobs('linkedin', jobLists);
 
     // close browser
     await this.browserClose();
