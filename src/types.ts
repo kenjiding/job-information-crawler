@@ -11,7 +11,7 @@ interface IOptions {
   linkedin?: OptionalSearchParams<ISearchParams>;
 }
 
-// 确保至少有一个属性
+// Type alias for options with at least one property
 export type ValidOptions = AtLeastOne<IOptions>;
 
 export interface ISearchParams {
