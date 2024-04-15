@@ -3,11 +3,11 @@
 
 `job-information-crawler` this is a linkedin, seek job information crawler
 
-## 描述
+## description
 
 This project shows how to use the Puppeteer framework to work with several other commonly used Node.js libraries, such as `csv-writer` for data export, `dayjs` for date processing, etc., to implement web page automation tasks.
 
-## 特性
+## features
 
 - linkedin, seek job information crawler
 - Web page automation
