@@ -42,7 +42,22 @@ npm run start
 ```
 
 ## Search Guide
+
 ```javascript
+  /**
+   * ./src/index.ts
+   * 
+   * You can use the following order:
+   *
+  */
+  start.seak(...).linkedin(...);
+  start.linkedin(...).seek(...);
+  start.linkedin(...);
+  start..seek(...);
+```
+
+```javascript
+// example of search options
 {
   // linkedin/seek account
   username: process.env.SEEK_EMAIL!,
