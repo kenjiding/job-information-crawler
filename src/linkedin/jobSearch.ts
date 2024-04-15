@@ -76,11 +76,12 @@ class JobSearch {
                 jobDescription,
                 jobInfo,
                 componyInfo,
+                jobUrl: window.location.href
               };
-
+              
               const regex = new RegExp(ignores.join('|'), 'i');
               // if the job description contains any of the ignore words, skip this job
-              const skipThisJob = regex.test(jobDescription);
+              const skipThisJob = ignores.length > 0 ? regex.test(jobDescription) : false;
               if (!skipThisJob) {
                 if (titleIncludes) {
                   new RegExp(titleIncludes, 'gi').test(jobTitle) && jobList.push(data);
@@ -103,7 +104,6 @@ class JobSearch {
   }
 
   async nextpage(pageNum: number) {
-    console.log('pageNum: ', pageNum);
     const paginationList = await this.page.$$('.artdeco-pagination__pages li');
     for (let i = 0; i < paginationList.length; i++) {
       const li = paginationList[i];

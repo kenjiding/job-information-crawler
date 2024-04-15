@@ -4,10 +4,14 @@
   "description": "linkedin, seek job information crawler",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "nodemon"
+    "build": "cross-env NODE_ENV=production npx tsc",
+    "start": "cross-env NODE_ENV=development nodemon"
   },
-  "keywords": ["linkedin", "seek", "job information crawler"],
+  "keywords": [
+    "linkedin",
+    "seek",
+    "job information crawler"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -22,6 +26,7 @@
     "@types/node": "^20.12.7",
     "@types/pubsub-js": "^1.8.6",
     "@types/puppeteer": "^7.0.4",
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

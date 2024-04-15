@@ -1,30 +1,22 @@
-import dotenv from 'dotenv';
-dotenv.config();
-import Linkedin from './linkedin';
-import Seek from './seek';
+import start from './start';
 
-async function run() {
-  // start the scraper to search in seek
-  await new Seek({
-    username: process.env.SEEK_EMAIL!,
-    password: process.env.SEEK_PASSWORD!,
-    keywords: 'marketing',
+start({
+  seek: {
+    // username: 'xxx', // you can set here or set it in .env file
+    // password: 'xxx', // you can set here or set it in .env file
+    keywords: 'developer',
     location: 'Australia',
-    titleIncludes: '',
+    titleIncludes: 'full stack | back end',
     ignores: ['citizen'],
     pages: 20,
-  }).run();
-
-  // start the scraper to search in linkedin
-  await new Linkedin({
-    username: process.env.LINKEDIN_EMAIL!,
-    password: process.env.LINKEDIN_PASSWORD!,
-    keywords: 'full stack',
+  },
+  linkedin: {
+    // username: 'xxx', // you can set here or set it in .env file
+    // password: 'xxx', // you can set here or set it in .env file
+    keywords: 'engineer',
     location: 'Australia',
-    titleIncludes: '',
+    titleIncludes: 'full stack | front end',
     ignores: ['citizen'],
-    pages: 30,
-  }).run();
-}
-
-run();
+    pages: 20,
+  },
+});

@@ -20,11 +20,11 @@ export default class Base {
   constructor({
     username,
     password,
-    keywords,
-    location,
-    filename,
-    titleIncludes,
-    ignores,
+    keywords = '',
+    location = '',
+    filename = 'default',
+    titleIncludes = '',
+    ignores = [],
     pages = 10,
   }: ISearchParams) {
     this.username = username;
@@ -49,6 +49,7 @@ export default class Base {
         {id: 'jobLocation', title: 'Job Location'},
         {id: 'jobInfo', title: 'job info'},
         {id: 'componyInfo', title: 'compony info'},
+        {id: 'jobUrl', title: 'job apply url'},
         {id: 'jobDescription', title: 'job Description'}
       ]
     });

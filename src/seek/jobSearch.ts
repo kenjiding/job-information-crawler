@@ -51,21 +51,31 @@ class JobSearch {
         const companyName = (document.querySelector(`span[data-automation="advertiser-name"]`) as HTMLElement)?.innerText;
         const jobDescription = (document.querySelector(`div[data-automation="jobAdDetails"]`) as HTMLElement)?.innerText;
         
-        const regex = new RegExp(ignores.join('|'), 'gi');
-        // if the job description contains any of the ignore words, skip this job
-        const skipThisJob = regex.test(jobDescription);
-        if (skipThisJob) {
-          return null;
+        if (ignores.length > 0) {
+          const regex = new RegExp(ignores.join('|'), 'gi');
+          // if the job description contains any of the ignore words, skip this job
+          const skipThisJob = regex.test(jobDescription);
+          if (skipThisJob) return null;
         }
 
-        const data = { jobTitle, jobLocation, companyName, jobInfo: `${jobType}-${jobInfo}`, jobDescription, componyInfo: '' };
+        const data = {
+          jobTitle,
+          jobLocation,
+          companyName,
+          jobInfo: `${jobType}-${jobInfo}`,
+          jobDescription,
+          jobUrl: window.location.href,
+          componyInfo: ''
+        };
+        console.log('data: ', data);
+
         if (titleIncludes) {
           if (new RegExp(titleIncludes, 'gi').test(jobTitle)) return data;
         } else {
           return data;
         }
       }, this.titleIncludes, this.ignores);
-      details && results.push(details);
+      details && results.push({ ...details, jobUrl: this.page.url()});
       await this.page.goBack();
       await this.page.waitForSelector('div[data-automation="searchResults"]', { visible: true });
     }
