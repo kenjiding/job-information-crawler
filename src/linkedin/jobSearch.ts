@@ -1,32 +1,37 @@
 import { wait } from '../utils';
-import { ISearchParams, ISearchResult, ISearchResultCallback } from '../types';
+import { ISearchParams, Ifilter, ISearchResultCallback, ISearchResult } from '../types';
 import { Page } from 'puppeteer';
+import { TimeRangeMap } from './constant';
 
-type IJobSearch = Pick<ISearchParams, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores'>;
+type IJobSearch = Pick<ISearchParams, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores' | 'filter'>
+& { page: Page, thereAreMore?: boolean };
 
-class JobSearch {
-  page: any;
-  keywords: string;
-  location: string;
-  titleIncludes: string;
-  ignores: string[];
-  pages: number;
-  thereAreMore: boolean = true;
+class JobSearch implements IJobSearch {
+  page;
+  keywords;
+  location;
+  titleIncludes;
+  ignores;
+  pages;
+  filter;
+  thereAreMore = true;
 
   constructor({
     page,
     keywords,
     location,
-    titleIncludes,
-    ignores,
-    pages
+    titleIncludes = '',
+    ignores = [],
+    filter,
+    pages = 1
   }: IJobSearch & { page: Page }) {
     this.page = page;
     this.keywords = keywords;
     this.location = location;
-    this.titleIncludes = titleIncludes || '';
-    this.ignores = ignores || [];
-    this.pages = pages || 1;
+    this.filter = filter;
+    this.titleIncludes = titleIncludes;
+    this.ignores = ignores;
+    this.pages = pages;
   }
   // game_children_challenge
   async search(cb: ISearchResultCallback) {
@@ -37,8 +42,15 @@ class JobSearch {
     await this.page.type('input.jobs-search-box__text-input[autocomplete="address-level2"]', this.location);
     await wait();
     await this.page.keyboard.press('Enter');
-    await this.page.waitForNavigation({ waitUntil: 'load' });
-
+    await this.page.waitForSelector('#searchFilter_timePostedRange', { timeout: 10000 });
+    await this.page.click('#searchFilter_timePostedRange');
+    const timePostedElements = await this.page.$$('[id^="timePostedRange-"]');
+    if (timePostedElements.length > 0) {
+      await timePostedElements[TimeRangeMap[this.filter?.timeRange || '']].click();
+      await this.page.waitForSelector('[data-control-name="filter_show_results"]', { timeout: 10000 });
+      const button = await this.page.$('[data-control-name="filter_show_results"]');
+      await button?.click();
+    }
     // search job result
     return await this.loadJobList(cb);
   }
@@ -47,12 +59,19 @@ class JobSearch {
     let pageNum = 1;
     while (this.thereAreMore && pageNum <= this.pages) {
       try {
-        await wait(3000);
+        // wait for the job list to load
+        const oldContent = await this.page.evaluate(() => document.querySelector('.scaffold-layout__list-container')?.textContent);
+        await this.page.waitForFunction(
+          oldContent => document.querySelector('.scaffold-layout__list-container')?.textContent !== oldContent,
+          {},
+          oldContent
+        );
+        // get job list
         const jobs = await this.page.evaluate(async (titleIncludes: string, ignores: string[]) => {
           const listContainer = document.querySelector('.jobs-search-results-list');
           if (listContainer) listContainer.scrollTop = listContainer.scrollHeight;
           const jobElements = document.querySelectorAll('.jobs-search-results__list-item');
-          const jobList = [];
+          const jobList: ISearchResult[] = [];
           for (let i = 0; i < jobElements.length; i++) {
             const job = jobElements[i];
             const jonDom = job.querySelector('.job-card-list__title strong') as HTMLElement;
@@ -68,7 +87,7 @@ class JobSearch {
               const jobInfo = (document.querySelector('.job-details-jobs-unified-top-card__primary-description-without-tagline') as HTMLElement)?.innerText;
               const elements = Array.from(document.querySelectorAll('li.job-details-jobs-unified-top-card__job-insight')) || [];
               // Company size, keywords type
-              const componyInfo = elements.slice(0, 2).map(el => (el as HTMLElement).innerText);
+              const componyInfo = elements.slice(0, 2).map(el => (el as HTMLElement).innerText)?.join(',');
               const data = {
                 jobTitle,
                 companyName,

@@ -1,21 +1,22 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import { createObjectCsvWriter } from 'csv-writer';
 import dayjs from "dayjs";
-import { ISearchParams, ISearchResult } from "./types";
+import { ISearchParams, ISearchResult, SearchTimeFilter } from "./types";
 
-export default class Base {
+export default class Base implements ISearchParams {
   browser!: Browser;
   page!: Page;
   private csvWriter!: any;
 
-  username: string;
-  password: string;
-  keywords: string;
-  location: string;
-  titleIncludes: string;
-  ignores: string[];
-  pages: number;
-  filename: string;
+  username;
+  password;
+  keywords;
+  location;
+  titleIncludes;
+  ignores;
+  pages;
+  filename;
+  filter;
 
   constructor({
     username,
@@ -25,16 +26,18 @@ export default class Base {
     filename = 'default',
     titleIncludes = '',
     ignores = [],
+    filter = {},
     pages = 10,
   }: ISearchParams) {
     this.username = username;
     this.password = password;
     this.keywords = keywords;
     this.location = location;
-    this.filename = filename || '';
-    this.titleIncludes = titleIncludes || '';
-    this.ignores = ignores || [];
-    this.pages = pages || 1;
+    this.filename = filename;
+    this.titleIncludes = titleIncludes;
+    this.ignores = ignores;
+    this.pages = pages;
+    this.filter = filter;
     this.creatCsvWriter();
   }
 

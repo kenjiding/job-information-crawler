@@ -11,6 +11,7 @@ export default class LinkedinSearch extends Base {
     location,
     titleIncludes,
     ignores,
+    filter,
     filename = 'linkdidn',
     pages = 10,
   }: ISearchParams) {
@@ -21,6 +22,7 @@ export default class LinkedinSearch extends Base {
       location,
       titleIncludes,
       ignores,
+      filter,
       filename,
       pages
     });
@@ -43,7 +45,8 @@ export default class LinkedinSearch extends Base {
       pages: this.pages,
       titleIncludes: this.titleIncludes,
       ignores: this.ignores,
-    }).search((res: ISearchResult[]) => {
+      filter: this.filter,
+    }).search((res) => {
       // write jobs to csv file
       this.saveJobs(res);
     });

@@ -14,6 +14,11 @@ interface IOptions {
 // Type alias for options with at least one property
 export type ValidOptions = AtLeastOne<IOptions>;
 
+export interface Ifilter {
+  timeRange?: SearchTimeFilter;
+}
+
+export type SearchTimeFilter = '' | 'month' | 'week' | 'day';
 export interface ISearchParams {
   username: string;
   password: string;
@@ -23,6 +28,7 @@ export interface ISearchParams {
   filename?: string;
   ignores?: string[];
   pages?: number;
+  filter?: Ifilter;
 }
 
 export interface ISearchResult {

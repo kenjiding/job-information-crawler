@@ -12,6 +12,7 @@ export default class Seek extends Base {
     filename = 'seek',
     titleIncludes,
     ignores,
+    filter,
     pages = 10,
   }: ISearchParams) {
     super({
@@ -22,6 +23,7 @@ export default class Seek extends Base {
       titleIncludes,
       ignores,
       filename,
+      filter,
       pages
     });
   }

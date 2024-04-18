@@ -58,20 +58,15 @@ npm run start
 
 ```javascript
 // example of search options
-{
-  // linkedin/seek account
-  username: process.env.SEEK_EMAIL!,
-  // linkedin/seek password
-  password: process.env.SEEK_PASSWORD!,
-  // search keywords
-  keywords: 'developer engineer | remote',
-  // search location
-  location: 'Australia',
-  // search job title includes these keywords
-  titleIncludes: 'senior',
-  // skip job descriptions with these keywords
-  ignores: ['citizen'],
-  // how many pages to search
-  pages: 1,
-}
+/**
+ * @param {string} username - LinkedIn username
+ * @param {string} password - LinkedIn password
+ * @param {string} keywords - Keywords to search
+ * @param {string} location - Location to search
+ * @param {string} titleIncludes - Title includes to search
+ * @param {string[]} ignores - Keywords to ignore
+ * @param {Object} filter - Filter options
+ * @param {number} pages - Number of pages to search
+ */
+
 ```
