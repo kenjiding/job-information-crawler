@@ -20,7 +20,7 @@ This project shows how to use the Puppeteer framework to work with several other
 First, make sure you have installed [Node.js](https://nodejs.org/) (the latest stable version is recommended). Then, clone this repository and install dependencies:
 
 ```bash
-git clone https://github.com/yourusername/puppeteer-page.git
+git clone https://github.com/kenjiding/job-information-crawler.git
 cd job-information-crawler
 ```
 

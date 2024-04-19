@@ -12,6 +12,7 @@ export default class Seek extends Base {
     filename = 'seek',
     titleIncludes,
     ignores,
+    enableSendEmail,
     filter,
     pages = 10,
   }: ISearchParams) {
@@ -21,6 +22,7 @@ export default class Seek extends Base {
       keywords,
       location,
       titleIncludes,
+      enableSendEmail,
       ignores,
       filename,
       filter,
@@ -43,10 +45,13 @@ export default class Seek extends Base {
       titleIncludes: this.titleIncludes,
       ignores: this.ignores,
       pages: this.pages,
-    }).search((data) => {
+    }).search((res) => {
+      this.tempJobsData.push(...res);
       // write jobs to csv file
-      this.saveJobs(data);
+      this.saveJobs(res);
     });
+
+    this.enableSendEmail && this.sendJobsEmail({ subject: 'Seek Jobs' });
 
     await this.browserClose();
   }

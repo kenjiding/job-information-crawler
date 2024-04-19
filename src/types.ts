@@ -29,6 +29,7 @@ export interface ISearchParams {
   ignores?: string[];
   pages?: number;
   filter?: Ifilter;
+  enableSendEmail?: boolean;
 }
 
 export interface ISearchResult {

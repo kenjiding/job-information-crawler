@@ -2,7 +2,7 @@ import Login from './login';
 import JobSearch from './jobSearch';
 import { ISearchParams, ISearchResult } from '../types';
 import Base from '../base';
-
+import { sendEmail } from '../email';
 export default class LinkedinSearch extends Base {
   constructor({
     username,
@@ -12,6 +12,7 @@ export default class LinkedinSearch extends Base {
     titleIncludes,
     ignores,
     filter,
+    enableSendEmail,
     filename = 'linkdidn',
     pages = 10,
   }: ISearchParams) {
@@ -21,6 +22,7 @@ export default class LinkedinSearch extends Base {
       keywords,
       location,
       titleIncludes,
+      enableSendEmail,
       ignores,
       filter,
       filename,
@@ -47,10 +49,12 @@ export default class LinkedinSearch extends Base {
       ignores: this.ignores,
       filter: this.filter,
     }).search((res) => {
+      this.tempJobsData.push(...res);
       // write jobs to csv file
       this.saveJobs(res);
     });
 
+    this.enableSendEmail && this.sendJobsEmail({ subject: 'LinkedIn Jobs' });
 
     // close browser
     await this.browserClose();

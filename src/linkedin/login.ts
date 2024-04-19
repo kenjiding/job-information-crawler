@@ -2,7 +2,7 @@ import { Page } from "puppeteer";
 import fs from 'fs';
 
 // cookie path
-const cookiesPath = 'linkedin_cookies.json';
+const COOKIES_PATH = 'linkedin_cookies.json';
 class Login {
   page: any;
   username: string;
@@ -23,8 +23,8 @@ class Login {
 
   async run() {
     // check cookies are exist, and go to index page immediately
-    if (fs.existsSync(cookiesPath)) {
-      const cookiesString = fs.readFileSync(cookiesPath).toString();
+    if (fs.existsSync(COOKIES_PATH)) {
+      const cookiesString = fs.readFileSync(COOKIES_PATH).toString();
       const cookies = JSON.parse(cookiesString);
       for (const cookie of cookies) {
         await this.page.setCookie(cookie);
@@ -50,7 +50,7 @@ class Login {
     await this.page.waitForNavigation({ waitUntil: 'load' });
     // save cookies again
     const cookies = await this.page.cookies();
-    fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, 2));
+    fs.writeFileSync(COOKIES_PATH, JSON.stringify(cookies, null, 2));
   }
 }
 

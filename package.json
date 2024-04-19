@@ -19,11 +19,13 @@
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "mysql2": "^3.6.3",
+    "nodemailer": "^6.9.13",
     "pubsub-js": "^1.9.4",
     "puppeteer": "^21.5.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
+    "@types/nodemailer": "^6.4.14",
     "@types/pubsub-js": "^1.8.6",
     "@types/puppeteer": "^7.0.4",
     "cross-env": "^7.0.3",

@@ -17,18 +17,12 @@
  * start.linkedin(...);
  * start.seek(...);
 */
-
 import start from './start';
 
 start.linkedin({
-  // username: 'xxx', // you can set here or set it in .env file
-  // password: 'xxx', // you can set here or set it in .env file
   keywords: 'developer',
   location: 'Australia',
-  titleIncludes: 'full stack | back end',
   ignores: ['citizen'],
-  filter: {
-    timeRange: 'day',
-  },
-  pages: 10,
+  enableSendEmail: true,
+  pages: 2,
 });

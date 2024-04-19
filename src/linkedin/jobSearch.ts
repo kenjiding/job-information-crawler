@@ -55,17 +55,18 @@ class JobSearch implements IJobSearch {
     return await this.loadJobList(cb);
   }
 
-  async loadJobList(cb: ISearchResultCallback): Promise<void> {
+  async loadJobList(cb: ISearchResultCallback): Promise<boolean> {
     let pageNum = 1;
     while (this.thereAreMore && pageNum <= this.pages) {
       try {
         // wait for the job list to load
-        const oldContent = await this.page.evaluate(() => document.querySelector('.scaffold-layout__list-container')?.textContent);
-        await this.page.waitForFunction(
-          oldContent => document.querySelector('.scaffold-layout__list-container')?.textContent !== oldContent,
-          {},
-          oldContent
-        );
+        await wait(3000);
+        // const oldContent = await this.page.evaluate(() => document.querySelector('.scaffold-layout__list-container')?.textContent);
+        // await this.page.waitForFunction(
+        //   oldContent => document.querySelector('.scaffold-layout__list-container')?.textContent !== oldContent,
+        //   {},
+        //   oldContent
+        // );
         // get job list
         const jobs = await this.page.evaluate(async (titleIncludes: string, ignores: string[]) => {
           const listContainer = document.querySelector('.jobs-search-results-list');
@@ -107,6 +108,8 @@ class JobSearch implements IJobSearch {
                 } else {
                   jobList.push(data);
                 }
+              } else {
+                console.log('需要pr的jobDescription: ', jobDescription);
               }
             }
           }
@@ -116,10 +119,11 @@ class JobSearch implements IJobSearch {
         // next page
         await this.nextpage(++pageNum);
       } catch (error: any) {
-        console.log('error: ', error);
         throw new Error(error);
       }
     }
+
+    return true;
   }
 
   async nextpage(pageNum: number) {
