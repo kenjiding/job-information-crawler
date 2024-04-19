@@ -33,6 +33,12 @@ LINKEDIN_EMAIL='your_linkedin_email'
 LINKEDIN_PASSWORD='your_linkedin_password'
 SEEK_EMAIL='your_seek_email'
 SEEK_PASSWORD='your_seek_password'
+# your email account for sending email
+SENDER_EMAIL='sender_email'
+# your email account password
+SENDER_EMAIL_PASSWORD='sender_email_password'
+# receiving email
+SENDER_EMAIL_TARGET='sender_email'
 ```
 
 ### Install

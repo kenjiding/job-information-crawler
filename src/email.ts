@@ -1,39 +1,38 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.163.com', // 网易邮箱的 SMTP 服务器地址
-  port: 465, // SSL 连接的端口号
-  secure: true, // 使用 SSL
+  host: 'smtp.163.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: '13610307032@163.com',
-    pass: 'GEPPIPRLOFVZLISU',
+    user: process.env.SENDER_EMAIL,
+    pass: process.env.SENDER_EMAIL_PASSWORD,
   }
 });
 
 export function sendEmail({
   html,
   subject,
-  to = 'kenjiding807@gmail.com'
+  to = process.env.SENDER_EMAIL_TARGET || ''
 }: {
   html: string;
   subject: string;
   to: string;
 }) {
-  // 准备邮件内容和附件
   const mailOptions: nodemailer.SendMailOptions = {
-    from: '13610307032@163.com',  // 发件人
-    to, // 收件人
-    subject, // 邮件主题
+    from: process.env.SENDER_EMAIL,
+    to,
+    subject,
     html,
     // attachments: [
-    //   {   // 文件附件
-    //     filename: 'jobsList.csv',            // 附件文件名
-    //     path: filePath,         // 附件文件路径
+    //   {
+    //     filename: 'jobsList.csv',
+    //     path: filePath,
     //   }
     // ]
   };
 
-  // 发送邮件
+  // send mail with defined transport object
   transporter.sendMail(mailOptions, (error, info: { response: string; }) => {
     if (error) {
       console.log('Error sending email:', error);
