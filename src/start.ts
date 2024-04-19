@@ -4,7 +4,7 @@ import Seek from './seek';
 import { ISearchParams, OptionalSearchParams } from './types';
 import { mergeOptions } from './utils';
 class Start {
-  promiseChain: Promise<any>;
+  promiseChain: Promise<void>;
 
   constructor() {
     this.promiseChain = Promise.resolve();

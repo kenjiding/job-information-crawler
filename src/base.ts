@@ -1,10 +1,10 @@
-import puppeteer, { Browser, Page } from "puppeteer";
+import puppeteer, { Browser, Page } from 'puppeteer';
 import { createObjectCsvWriter } from 'csv-writer';
-import dayjs from "dayjs";
-import { ISearchParams, ISearchResult, SearchTimeFilter } from "./types";
+import dayjs from 'dayjs';
+import { ISearchParams, ISearchResult } from './types';
 import path from 'path';
-import { getEmailTemplate } from "./template";
-import { sendEmail } from "./email";
+import { getEmailTemplate } from './template';
+import { sendEmail } from './email';
 
 const filePath = (filename: string) => path.join(__dirname, '..', 'jobsData', filename); // 假设 'a.txt' 在项目根目录
 export default class Base implements ISearchParams {
@@ -50,7 +50,7 @@ export default class Base implements ISearchParams {
   }
 
   creatCsvWriter() {
-    const date = dayjs().format("YYYY-MM-DD HH:mm")
+    const date = dayjs().format('YYYY-MM-DD HH:mm');
     this.csvWriter = createObjectCsvWriter({
       path: filePath(`${this.filename}_${date}.csv`),
       append: true,

@@ -1,8 +1,7 @@
 import Login from './login';
 import JobSearch from './jobSearch';
-import { ISearchParams, ISearchResult } from '../types';
+import { ISearchParams } from '../types';
 import Base from '../base';
-import { sendEmail } from '../email';
 export default class LinkedinSearch extends Base {
   constructor({
     username,

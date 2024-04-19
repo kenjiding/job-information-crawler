@@ -1,4 +1,4 @@
-import { ISearchResult } from "./types";
+import { ISearchResult } from './types';
 
 
 function generateTable(searchResults: ISearchResult[]) {
@@ -20,7 +20,10 @@ function generateTable(searchResults: ISearchResult[]) {
 export const getEmailTemplate = ({
   data,
   subject,
-}: any) => {
+}: {
+  data: ISearchResult[],
+  subject: string,
+}) => {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -87,4 +90,4 @@ export const getEmailTemplate = ({
     </body>
     </html>
   `;
-}
+};

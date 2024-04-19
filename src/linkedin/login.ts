@@ -1,10 +1,10 @@
-import { Page } from "puppeteer";
+import { Page } from 'puppeteer';
 import fs from 'fs';
 
 // cookie path
 const COOKIES_PATH = 'linkedin_cookies.json';
 class Login {
-  page: any;
+  page: Page;
   username: string;
   password: string;
   constructor({

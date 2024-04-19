@@ -5,7 +5,7 @@ import { Page } from 'puppeteer';
 type IJobSearch = Pick<ISearchParams, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores'>;
 
 class JobSearch {
-  page: any;
+  page: Page;
   keywords: string;
   location: string;
   titleIncludes: string;
@@ -31,12 +31,12 @@ class JobSearch {
   // grabJobInfo function to get the job details
   async grabJobInfo(): Promise<ISearchResult[]> {
     await this.page.waitForSelector('div[data-automation="searchResults"]', { visible: true });
-    const articles = await this.page.$$(`a[data-automation="jobTitle"]`);
+    const articles = await this.page.$$('a[data-automation="jobTitle"]');
     const length = articles.length;
     const results: ISearchResult[] = [];
     let nums = 0;
     while (nums < length) {
-      const articles = await this.page.$$(`a[data-automation="jobTitle"]`);
+      const articles = await this.page.$$('a[data-automation="jobTitle"]');
       if (articles.length === 0) break;
       const article = articles[nums++];
       await Promise.all([
@@ -44,12 +44,12 @@ class JobSearch {
         this.page.waitForNavigation({ waitUntil: 'networkidle0' })
       ]);
       const details: ISearchResult | null = await this.page.evaluate((titleIncludes: string, ignores: string[]) => {
-        const jobTitle = (document.querySelector(`h1[data-automation="job-detail-title"]`) as HTMLElement)?.innerText;
-        const jobLocation = (document.querySelector(`span[data-automation="job-detail-location"]`) as HTMLElement)?.innerText;
-        const jobInfo = (document.querySelector(`span[data-automation="job-detail-salary"]`) as HTMLElement)?.innerText;
-        const jobType = (document.querySelector(`span[data-automation="job-detail-work-type"]`) as HTMLElement)?.innerText;
-        const companyName = (document.querySelector(`span[data-automation="advertiser-name"]`) as HTMLElement)?.innerText;
-        const jobDescription = (document.querySelector(`div[data-automation="jobAdDetails"]`) as HTMLElement)?.innerText;
+        const jobTitle = (document.querySelector('h1[data-automation="job-detail-title"]') as HTMLElement)?.innerText;
+        const jobLocation = (document.querySelector('span[data-automation="job-detail-location"]') as HTMLElement)?.innerText;
+        const jobInfo = (document.querySelector('span[data-automation="job-detail-salary"]') as HTMLElement)?.innerText;
+        const jobType = (document.querySelector('span[data-automation="job-detail-work-type"]') as HTMLElement)?.innerText;
+        const companyName = (document.querySelector('span[data-automation="advertiser-name"]') as HTMLElement)?.innerText;
+        const jobDescription = (document.querySelector('div[data-automation="jobAdDetails"]') as HTMLElement)?.innerText;
         
         if (ignores.length > 0) {
           const regex = new RegExp(ignores.join('|'), 'gi');
@@ -67,10 +67,10 @@ class JobSearch {
           jobUrl: window.location.href,
           componyInfo: ''
         };
-        console.log('data: ', data);
 
         if (titleIncludes) {
           if (new RegExp(titleIncludes, 'gi').test(jobTitle)) return data;
+          return null;
         } else {
           return data;
         }

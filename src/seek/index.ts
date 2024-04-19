@@ -1,7 +1,7 @@
-import Base from "../base";
-import { ISearchParams } from "../types";
-import Login from "./login";
-import JobSearch from "./jobSearch";
+import Base from '../base';
+import { ISearchParams } from '../types';
+import Login from './login';
+import JobSearch from './jobSearch';
 
 export default class Seek extends Base {
   constructor({

@@ -1,7 +1,4 @@
 import nodemailer from 'nodemailer';
-import path from 'path';
-
-const filePath = path.join(__dirname, '..', 'linkdidn_2024-04-18 19:34.csv'); // 假设 'a.txt' 在项目根目录
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.163.com', // 网易邮箱的 SMTP 服务器地址
@@ -37,7 +34,7 @@ export function sendEmail({
   };
 
   // 发送邮件
-  transporter.sendMail(mailOptions, (error: any, info: { response: string; }) => {
+  transporter.sendMail(mailOptions, (error, info: { response: string; }) => {
     if (error) {
       console.log('Error sending email:', error);
     } else {

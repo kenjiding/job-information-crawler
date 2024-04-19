@@ -42,4 +42,4 @@ export interface ISearchResult {
   jobUrl: string;
 }
 
-export type ISearchResultCallback = (searchRes: ISearchResult[]) => any;
+export type ISearchResultCallback = (searchRes: ISearchResult[]) => void;

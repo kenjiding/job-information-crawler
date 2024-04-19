@@ -1,3 +1,12 @@
+
+/**
+ * You can use the following order:
+ * 
+ * start.seak(...).linkedin(...);
+ * start.linkedin(...).seek(...);
+ * start.linkedin(...);
+ * start.seek(...);
+*/
 /**
  * @param {string} username - LinkedIn username
  * @param {string} password - LinkedIn password
@@ -8,15 +17,6 @@
  * @param {Object} filter - Filter options
  * @param {number} pages - Number of pages to search
  */
-
-/**
- * You can use the following order:
- * 
- * start.seak(...).linkedin(...);
- * start.linkedin(...).seek(...);
- * start.linkedin(...);
- * start.seek(...);
-*/
 import start from './start';
 
 start.linkedin({

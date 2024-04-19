@@ -1,12 +1,11 @@
-import { Page } from "puppeteer";
+import { Page } from 'puppeteer';
 import fs from 'fs';
-import { wait } from "../utils";
 
 // cookie path
 const COOKIES_PATH = 'seek_cookies.json';
 const STORAGE_PATH = 'seek_storage.json';
 class Login {
-  page: any;
+  page: Page;
   username: string;
   password: string;
   constructor({
@@ -28,22 +27,22 @@ class Login {
     // check cookies are exist, and go to index page immediately
     if (fs.existsSync(COOKIES_PATH)) {
       const cookies = JSON.parse(fs.readFileSync(COOKIES_PATH, 'utf8'));
-      for (let cookie of cookies) {
+      for (const cookie of cookies) {
         await this.page.setCookie(cookie);
       }
     }
     // check localStorage are exist, and set them
     if (fs.existsSync(STORAGE_PATH)) {
       const localStorageData = JSON.parse(fs.readFileSync(STORAGE_PATH, 'utf8'));
-      await this.page.evaluate((data: any) => {
-        for (let key in data) {
+      await this.page.evaluate((data) => {
+        for (const key in data) {
           localStorage.setItem(key, data[key]);
         }
       }, localStorageData);
     }
     // reload page after set cookie and localStorage
-    await this.page.reload({ waitUntil: "load" });
-    const isLoginPage = await this.page.$(`a[data-automation="sign in"]`);
+    await this.page.reload({ waitUntil: 'load' });
+    const isLoginPage = await this.page.$('a[data-automation="sign in"]');
     if (isLoginPage) {
       // if cookies are expired, perform login
       await this.login();
@@ -66,11 +65,11 @@ class Login {
 
     // save localStorage again
     const localStorageData = await this.page.evaluate(() => {
-      let json: { [key: string]: string } = {};
+      const json: { [key: string]: string } = {};
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key !== null) {
-          json[key] = localStorage.getItem(key) || "";
+          json[key] = localStorage.getItem(key) || '';
         }
       }
       return json;

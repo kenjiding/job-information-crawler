@@ -1,5 +1,5 @@
 import { wait } from '../utils';
-import { ISearchParams, Ifilter, ISearchResultCallback, ISearchResult } from '../types';
+import { ISearchParams, ISearchResultCallback, ISearchResult } from '../types';
 import { Page } from 'puppeteer';
 import { TimeRangeMap } from './constant';
 
@@ -142,12 +142,12 @@ class JobSearch implements IJobSearch {
         await li.click();
         break;
       }
-      const lastItem = paginationList[paginationList.length - 1]
+      const lastItem = paginationList[paginationList.length - 1];
       const lastItemValue = await lastItem.evaluate((
         node: { getAttribute: (arg0: string) => any; }
       ) => node.getAttribute('data-test-pagination-page-btn'));
       if (Number(lastItemValue) < pageNum) {
-        this.thereAreMore = false
+        this.thereAreMore = false;
         break;
       }
     }

@@ -1,4 +1,4 @@
-import { SearchTimeFilter } from "../types";
+import { SearchTimeFilter } from '../types';
 
 export const TimeRangeMap: Record<SearchTimeFilter, number> = {
   '': 0,
