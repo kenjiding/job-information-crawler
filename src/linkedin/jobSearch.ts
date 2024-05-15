@@ -45,7 +45,7 @@ class JobSearch implements IJobSearch {
     await this.page.waitForSelector('#searchFilter_timePostedRange', { timeout: 10000 });
     await this.page.click('#searchFilter_timePostedRange');
     const timePostedElements = await this.page.$$('[id^="timePostedRange-"]');
-    if (timePostedElements.length > 0) {
+    if (timePostedElements.length > 0 && this.filter?.timeRange) {
       await timePostedElements[TimeRangeMap[this.filter?.timeRange || '']].click();
       await this.page.waitForSelector('[data-control-name="filter_show_results"]', { timeout: 10000 });
       const button = await this.page.$('[data-control-name="filter_show_results"]');

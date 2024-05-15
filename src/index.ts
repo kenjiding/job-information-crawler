@@ -19,10 +19,11 @@
  */
 import start from './start';
 
-start.linkedin({
+start.seak({
   keywords: 'developer',
-  location: 'Australia',
+  location: 'Adelaide',
   ignores: ['citizen'],
+  // 开启邮箱推送
   enableSendEmail: true,
-  pages: 2,
+  pages: 1,
 });

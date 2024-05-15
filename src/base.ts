@@ -4,13 +4,14 @@ import dayjs from 'dayjs';
 import { ISearchParams, ISearchResult } from './types';
 import path from 'path';
 import { getEmailTemplate } from './template';
-import { sendEmail } from './email';
+import nodemailer from 'nodemailer';
 
 const filePath = (filename: string) => path.join(__dirname, '..', 'jobsData', filename); // 假设 'a.txt' 在项目根目录
 export default class Base implements ISearchParams {
   browser!: Browser;
   page!: Page;
   private csvWriter!: any;
+  private nodemailerIns!: any;
   protected tempJobsData: ISearchResult[] = [];
 
   username;
@@ -47,6 +48,19 @@ export default class Base implements ISearchParams {
     this.pages = pages;
     this.filter = filter;
     this.creatCsvWriter();
+    this.createNodemailer();
+  }
+
+  createNodemailer() {
+    this.nodemailerIns = nodemailer.createTransport({
+      host: 'smtp.163.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_EMAIL_PASSWORD,
+      }
+    });
   }
 
   creatCsvWriter() {
@@ -98,15 +112,31 @@ export default class Base implements ISearchParams {
     .then(() => console.log('\x1b[1m\x1b[34m', 'Data has been written into CSV file successfully.', '\x1b[0m'));
   }
 
-  sendJobsEmail({ subject }: { subject: string }) {
+  sendJobsEmail({ subject, to }: { subject: string, to?: string }) {
     const html = getEmailTemplate({
       data: this.tempJobsData,
       subject
     });
-    sendEmail({
-      html,
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: to || process.env.SENDER_EMAIL_TARGET,
       subject,
-      to: 'kenjiding807@gmail.com',
+      html,
+      // attachments: [
+      //   {
+      //     filename: 'jobsList.csv',
+      //     path: filePath,
+      //   }
+      // ]
+    };
+  
+    // send mail with defined transport object
+    this.nodemailerIns.sendMail(mailOptions, (error: Error, info: { response: string; }) => {
+      if (error) {
+        console.log('Error sending email:', error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
     });
   }
 }

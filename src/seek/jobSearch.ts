@@ -31,20 +31,16 @@ class JobSearch {
   // grabJobInfo function to get the job details
   async grabJobInfo(): Promise<ISearchResult[]> {
     await this.page.waitForSelector('div[data-automation="searchResults"]', { visible: true });
-    const articles = await this.page.$$('a[data-automation="jobTitle"]');
+    const articles = await this.page.$$('article[data-testid="job-card"]');
     const length = articles.length;
     const results: ISearchResult[] = [];
     let nums = 0;
-    while (nums < length) {
-      const articles = await this.page.$$('a[data-automation="jobTitle"]');
-      if (articles.length === 0) break;
-      const article = articles[nums++];
-      await Promise.all([
-        article.click(),
-        this.page.waitForNavigation({ waitUntil: 'networkidle0' })
-      ]);
+    while (length > 0 && nums < length) {
+      await articles[nums++].click(),
+      await this.page.waitForSelector('h1[data-automation="job-detail-title"]');
       const details: ISearchResult | null = await this.page.evaluate((titleIncludes: string, ignores: string[]) => {
         const jobTitle = (document.querySelector('h1[data-automation="job-detail-title"]') as HTMLElement)?.innerText;
+        console.log('jobTitle: ', jobTitle);
         const jobLocation = (document.querySelector('span[data-automation="job-detail-location"]') as HTMLElement)?.innerText;
         const jobInfo = (document.querySelector('span[data-automation="job-detail-salary"]') as HTMLElement)?.innerText;
         const jobType = (document.querySelector('span[data-automation="job-detail-work-type"]') as HTMLElement)?.innerText;
@@ -76,8 +72,6 @@ class JobSearch {
         }
       }, this.titleIncludes, this.ignores);
       details && results.push({ ...details, jobUrl: this.page.url()});
-      await this.page.goBack();
-      await this.page.waitForSelector('div[data-automation="searchResults"]', { visible: true });
     }
 
     return results;
