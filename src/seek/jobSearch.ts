@@ -107,9 +107,14 @@ class JobSearch implements IJobSearch {
     await dateFilterDom?.click();
     await this.page.waitForSelector('#RefineDateListed__radiogroup ul');
     if (this.filter.timeRange) {
+      await wait();
       const timeRange = TimeRangeMap[this.filter.timeRange];
       const dateListItem = await this.page.$(`#RefineDateListed__radiogroup ul li a[aria-label="${timeRange}"]`);
-      dateListItem?.click();
+      try {
+        await dateListItem?.click();
+      } catch (error) {
+        console.warn('error: seek timePostedRange click failed');
+      }
     }
     await this.page.click('button[type="submit"]');
     await this.nextpage(cb);

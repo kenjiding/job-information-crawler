@@ -52,7 +52,11 @@ class JobSearch implements IJobSearch {
       await wait(2000);
       const comfirmButtonWrapper = await this.page.$('.reusable-search-filters-buttons');
       const button = await comfirmButtonWrapper?.$('button[aria-live="polite"]');
-      await button?.click();
+      try {
+        await button?.click();
+      } catch (error) {
+        console.warn('error: linkdin timePostedRange click failed');
+      }
     }
 
     // search job result
