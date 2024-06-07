@@ -1,9 +1,9 @@
 import Base from '../base';
-import { ISearchParams } from '../types';
+import { ISearchParams, SeekSearchTimeFilter } from '../types';
 import Login from './login';
 import JobSearch from './jobSearch';
 
-export default class Seek extends Base {
+export default class Seek extends Base<SeekSearchTimeFilter> {
   constructor({
     username,
     password,
@@ -13,9 +13,10 @@ export default class Seek extends Base {
     titleIncludes,
     ignores,
     enableSendEmail,
+    filterAlreadyApply,
     filter,
     pages = 10,
-  }: ISearchParams) {
+  }: ISearchParams<SeekSearchTimeFilter>) {
     super({
       username,
       password,
@@ -25,6 +26,7 @@ export default class Seek extends Base {
       enableSendEmail,
       ignores,
       filename,
+      filterAlreadyApply,
       filter,
       pages
     });
@@ -44,7 +46,9 @@ export default class Seek extends Base {
       location: this.location,
       titleIncludes: this.titleIncludes,
       ignores: this.ignores,
+      filter: this.filter,
       pages: this.pages,
+      filterAlreadyApply: this.filterAlreadyApply,
     }).search((res) => {
       this.tempJobsData.push(...res);
       // write jobs to csv file

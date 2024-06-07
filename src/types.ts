@@ -7,28 +7,31 @@ type AtLeastOne<T, Keys extends keyof T = keyof T> =
   { [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>> }[Keys];
 
 interface IOptions {
-  seek?: OptionalSearchParams<ISearchParams>;
-  linkedin?: OptionalSearchParams<ISearchParams>;
+  seek?: OptionalSearchParams<ISearchParams<SeekSearchTimeFilter>>;
+  linkedin?: OptionalSearchParams<ISearchParams<LinkedinSearchTimeFilter>>;
 }
 
 // Type alias for options with at least one property
 export type ValidOptions = AtLeastOne<IOptions>;
 
-export interface Ifilter {
-  timeRange?: SearchTimeFilter;
+export interface Ifilter<T> {
+  timeRange?: T;
 }
 
-export type SearchTimeFilter = '' | 'month' | 'week' | 'day';
-export interface ISearchParams {
+export type LinkedinSearchTimeFilter = '' | 'month' | 'week' | 'day';
+export type SeekSearchTimeFilter = '' | 'Today' | '3' | '7' | '14' | '30';
+export interface ISearchParams<T> {
   username: string;
   password: string;
   keywords: string;
   location: string;
+  // if true, filter out jobs that have already been applied
+  filterAlreadyApply?: boolean;
   titleIncludes?: string;
   filename?: string;
   ignores?: string[];
   pages?: number;
-  filter?: Ifilter;
+  filter?: Ifilter<T>;
   enableSendEmail?: boolean;
 }
 

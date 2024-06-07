@@ -19,11 +19,24 @@
  */
 import start from './start';
 
-start.seak({
-  keywords: 'developer',
-  location: 'Adelaide',
+start.linkedin({
+  keywords: 'Senior Software Developer',
+  location: ' Australia',
   ignores: ['citizen'],
   // 开启邮箱推送
-  enableSendEmail: true,
+  enableSendEmail: false,
+  filter: {
+    timeRange: 'week'
+  },
+  pages: 1,
+}).seak({
+  keywords: 'Senior Software Developer',
+  location: ' Australia',
+  ignores: ['citizen'],
+  // 开启邮箱推送
+  enableSendEmail: false,
+  filter: {
+    timeRange: '7'
+  },
   pages: 1,
 });

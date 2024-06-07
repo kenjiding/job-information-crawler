@@ -59,7 +59,7 @@ npm run start
   start.seak(...).linkedin(...);
   start.linkedin(...).seek(...);
   start.linkedin(...);
-  start..seek(...);
+  start.seek(...);
 ```
 
 ```javascript
@@ -68,7 +68,8 @@ npm run start
  * @param {string} username - LinkedIn username
  * @param {string} password - LinkedIn password
  * @param {string} keywords - Keywords to search
- * @param {string} location - Location to search
+ * @param {string} location - Location to search 
+ * @param {string} filterAlreadyApply - filter out jobs that have already been applied, default is true
  * @param {string} titleIncludes - Title includes to search
  * @param {string[]} ignores - Keywords to ignore
  * @param {Object} filter - Filter options

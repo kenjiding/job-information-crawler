@@ -1,9 +1,9 @@
 import { wait } from '../utils';
-import { ISearchParams, ISearchResultCallback, ISearchResult } from '../types';
+import { ISearchParams, ISearchResultCallback, ISearchResult, LinkedinSearchTimeFilter } from '../types';
 import { Page } from 'puppeteer';
 import { TimeRangeMap } from './constant';
 
-type IJobSearch = Pick<ISearchParams, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores' | 'filter'>
+type IJobSearch = Pick<ISearchParams<LinkedinSearchTimeFilter>, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores' | 'filter'>
 & { page: Page, thereAreMore?: boolean };
 
 class JobSearch implements IJobSearch {
@@ -28,7 +28,7 @@ class JobSearch implements IJobSearch {
     this.page = page;
     this.keywords = keywords;
     this.location = location;
-    this.filter = filter;
+    this.filter = filter || { timeRange: ''};
     this.titleIncludes = titleIncludes;
     this.ignores = ignores;
     this.pages = pages;
@@ -44,13 +44,17 @@ class JobSearch implements IJobSearch {
     await this.page.keyboard.press('Enter');
     await this.page.waitForSelector('#searchFilter_timePostedRange', { timeout: 10000 });
     await this.page.click('#searchFilter_timePostedRange');
+    await wait();
     const timePostedElements = await this.page.$$('[id^="timePostedRange-"]');
     if (timePostedElements.length > 0 && this.filter?.timeRange) {
       await timePostedElements[TimeRangeMap[this.filter?.timeRange || '']].click();
-      await this.page.waitForSelector('[data-control-name="filter_show_results"]', { timeout: 10000 });
-      const button = await this.page.$('[data-control-name="filter_show_results"]');
+      // 等待返回结果
+      await wait(2000);
+      const comfirmButtonWrapper = await this.page.$('.reusable-search-filters-buttons');
+      const button = await comfirmButtonWrapper?.$('button[aria-live="polite"]');
       await button?.click();
     }
+
     // search job result
     return await this.loadJobList(cb);
   }

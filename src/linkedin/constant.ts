@@ -1,6 +1,6 @@
-import { SearchTimeFilter } from '../types';
+import { LinkedinSearchTimeFilter } from '../types';
 
-export const TimeRangeMap: Record<SearchTimeFilter, number> = {
+export const TimeRangeMap: Record<LinkedinSearchTimeFilter, number> = {
   '': 0,
   month: 1,
   week: 2,

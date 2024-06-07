@@ -1,8 +1,8 @@
 import Login from './login';
 import JobSearch from './jobSearch';
-import { ISearchParams } from '../types';
+import { ISearchParams, LinkedinSearchTimeFilter } from '../types';
 import Base from '../base';
-export default class LinkedinSearch extends Base {
+export default class LinkedinSearch extends Base<LinkedinSearchTimeFilter> {
   constructor({
     username,
     password,
@@ -14,7 +14,7 @@ export default class LinkedinSearch extends Base {
     enableSendEmail,
     filename = 'linkdidn',
     pages = 10,
-  }: ISearchParams) {
+  }: ISearchParams<LinkedinSearchTimeFilter>) {
     super({
       username,
       password,

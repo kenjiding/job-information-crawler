@@ -1,16 +1,25 @@
 import { wait } from '../utils';
-import { ISearchParams, ISearchResult, ISearchResultCallback } from '../types';
+import { TimeRangeMap } from './constant';
+import {
+  ISearchParams,
+  ISearchResult,
+  ISearchResultCallback,
+  SeekSearchTimeFilter,
+  Ifilter
+} from '../types';
 import { Page } from 'puppeteer';
 
-type IJobSearch = Pick<ISearchParams, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores'>;
+type IJobSearch = Pick<ISearchParams<SeekSearchTimeFilter>, 'keywords' | 'location' | 'pages' | 'titleIncludes' | 'ignores' | 'filter' | 'filterAlreadyApply'>;
 
-class JobSearch {
+class JobSearch implements IJobSearch {
   page: Page;
   keywords: string;
   location: string;
   titleIncludes: string;
+  filterAlreadyApply: boolean;
   ignores: string[];
   pages: number;
+  filter: Ifilter<SeekSearchTimeFilter>;
 
   constructor({
     page,
@@ -18,14 +27,18 @@ class JobSearch {
     location,
     titleIncludes,
     ignores,
+    filter,
+    filterAlreadyApply = true,
     pages
   }: IJobSearch & { page: Page }) {
     this.page = page;
     this.keywords = keywords;
     this.location = location;
+    this.filterAlreadyApply = filterAlreadyApply;
     this.titleIncludes = titleIncludes || '';
     this.ignores = ignores || [];
     this.pages = pages || 1;
+    this.filter = filter || { timeRange: ''};
   }
 
   // grabJobInfo function to get the job details
@@ -36,11 +49,13 @@ class JobSearch {
     const results: ISearchResult[] = [];
     let nums = 0;
     while (length > 0 && nums < length) {
-      await articles[nums++].click(),
+      await articles[nums++].click();
       await this.page.waitForSelector('h1[data-automation="job-detail-title"]');
+      const isApply = await this.page.$('#applied');
+      // if you have applied for this job, continue to the next job
+      if (this.filterAlreadyApply &&isApply) continue;
       const details: ISearchResult | null = await this.page.evaluate((titleIncludes: string, ignores: string[]) => {
         const jobTitle = (document.querySelector('h1[data-automation="job-detail-title"]') as HTMLElement)?.innerText;
-        console.log('jobTitle: ', jobTitle);
         const jobLocation = (document.querySelector('span[data-automation="job-detail-location"]') as HTMLElement)?.innerText;
         const jobInfo = (document.querySelector('span[data-automation="job-detail-salary"]') as HTMLElement)?.innerText;
         const jobType = (document.querySelector('span[data-automation="job-detail-work-type"]') as HTMLElement)?.innerText;
@@ -82,6 +97,20 @@ class JobSearch {
     await this.page.type('#keywords-input', this.keywords);
     await wait();
     await this.page.type('#SearchBar__Where', this.location);
+    await this.page.waitForSelector('button[data-automation="moreOptionsButton"]');
+    const moreOptionsButton = await this.page.$('button[data-automation="moreOptionsButton"]');
+    // 这里连续触发两次click是因为需要把#SearchBar__Where得出现的下拉框隐藏起来，不然触发filter选项会无效
+    await moreOptionsButton?.click();
+    await moreOptionsButton?.click();
+    await this.page.waitForSelector('#RefineBar--DateListed');
+    const dateFilterDom = await this.page.$('#RefineBar--DateListed');
+    await dateFilterDom?.click();
+    await this.page.waitForSelector('#RefineDateListed__radiogroup ul');
+    if (this.filter.timeRange) {
+      const timeRange = TimeRangeMap[this.filter.timeRange];
+      const dateListItem = await this.page.$(`#RefineDateListed__radiogroup ul li a[aria-label="${timeRange}"]`);
+      dateListItem?.click();
+    }
     await this.page.click('button[type="submit"]');
     await this.nextpage(cb);
   }

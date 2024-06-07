@@ -7,7 +7,7 @@ import { getEmailTemplate } from './template';
 import nodemailer from 'nodemailer';
 
 const filePath = (filename: string) => path.join(__dirname, '..', 'jobsData', filename); // 假设 'a.txt' 在项目根目录
-export default class Base implements ISearchParams {
+export default class Base<T> implements ISearchParams<T> {
   browser!: Browser;
   page!: Page;
   private csvWriter!: any;
@@ -24,11 +24,13 @@ export default class Base implements ISearchParams {
   filename;
   filter;
   enableSendEmail;
+  filterAlreadyApply;
 
   constructor({
     username,
     password,
     enableSendEmail,
+    filterAlreadyApply = true,
     keywords = '',
     location = '',
     filename = 'default',
@@ -36,7 +38,7 @@ export default class Base implements ISearchParams {
     ignores = [],
     filter = {},
     pages = 10,
-  }: ISearchParams) {
+  }: ISearchParams<T>) {
     this.username = username;
     this.password = password;
     this.keywords = keywords;
@@ -44,6 +46,7 @@ export default class Base implements ISearchParams {
     this.filename = filename;
     this.enableSendEmail = enableSendEmail;
     this.titleIncludes = titleIncludes;
+    this.filterAlreadyApply = filterAlreadyApply;
     this.ignores = ignores;
     this.pages = pages;
     this.filter = filter;
