@@ -45,7 +45,7 @@ class Login {
     const isLoginPage = await this.page.$('a[data-automation="sign in"]');
     if (isLoginPage) {
       // if cookies are expired, perform login
-      await this.login();
+      // await this.login();
     }
   }
 
