@@ -112,7 +112,7 @@ export default class Base<T> implements ISearchParams<T> {
   async saveJobs(jobLists: ISearchResult[]) {
     // write jobs to csv file
     await this.csvWriter.writeRecords(jobLists)
-    .then(() => console.log('\x1b[1m\x1b[34m', 'Data has been written into CSV file successfully.', '\x1b[0m'));
+    .then(() => console.log('\x1b[1m\x1b[34m', 'Data has been written into CSV file successfully', '\x1b[0m'));
   }
 
   sendJobsEmail({ subject, to }: { subject: string, to?: string }) {

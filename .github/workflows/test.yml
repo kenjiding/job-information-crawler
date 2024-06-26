@@ -1,0 +1,36 @@
+
+name: Testing
+on:
+  push:
+    branches:
+      - master  # adjust this to your main branch if it's named differently
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20  # adjust this to your project's node version
+    
+    - name: Install dependencies and build
+      run: |
+        npm i pnpm -g
+        pnpm i --no-lockfile
+
+    - name: Run script and check for success
+      run: pnpm run test
+
+    - name: Cache pnpm modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
+    
