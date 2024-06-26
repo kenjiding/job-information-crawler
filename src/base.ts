@@ -97,7 +97,7 @@ export default class Base<T> implements ISearchParams<T> {
     // check params
     await this.checkParams();
     this.browser = await puppeteer.launch({
-      headless: false,
+      headless: process.env.NODE_ENV === 'production',
       args: ['--start-maximized', '--disable-web-security'] }
     );
     this.page = await this.browser.newPage();
