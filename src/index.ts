@@ -32,4 +32,11 @@ start.seak({
     timeRange: '3'
   },
   pages: 1,
+}).linkedin({
+  keywords: 'Developer',
+  location: 'Melbourne',
+  // 只保存出标题中含有 front 关键字的职位, 多个关键由 | 隔开， 例如 front | full stack
+  // titleIncludes: 'front',
+  ignores: ['citizen'],
+  pages: 1,
 });

@@ -22,6 +22,10 @@ jobs:
       run: |
         npm i pnpm -g
         pnpm i --no-lockfile
+    - name: Set environment variables
+      run: |
+        echo "LINKEDIN_EMAIL=${{ secrets.ACCOUNT_NAME }}" >> $GITHUB_ENV
+        echo "LINKEDIN_PW=${{ secrets.ACCOUNT_PW }}" >> $GITHUB_ENV
 
     - name: Run script and check for success
       run: pnpm run test
