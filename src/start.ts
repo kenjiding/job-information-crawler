@@ -22,7 +22,11 @@ class Start {
   // start the scraper to search in seek
   seak(opts: OptionalSearchParams<ISearchParams<SeekSearchTimeFilter>>) {
     this.promiseChain = this.promiseChain.then(async () => {
-      const seekOptions = mergeOptions<SeekSearchTimeFilter>(opts);
+      const seekOptions = mergeOptions<SeekSearchTimeFilter>({
+        username: process.env.SEEK_EMAIL!,
+        password: process.env.SEEK_PASSWORD!,
+        ...opts
+      });
       await new Seek(seekOptions).run();
     });
     return this;
@@ -31,7 +35,11 @@ class Start {
   // start the scraper to search in linkedin
   linkedin(opts: OptionalSearchParams<ISearchParams<LinkedinSearchTimeFilter>>) {
     this.promiseChain = this.promiseChain.then(async () => {
-      const linkedinOptions = mergeOptions<LinkedinSearchTimeFilter>(opts);
+      const linkedinOptions = mergeOptions<LinkedinSearchTimeFilter>({
+        username: process.env.LINKEDIN_EMAIL!,
+        password: process.env.LINKEDIN_PASSWORD!,
+        ...opts
+      });
       await new Linkedin(linkedinOptions).run();
     });
     return this;
