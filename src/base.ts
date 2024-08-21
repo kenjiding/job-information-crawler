@@ -71,14 +71,15 @@ export default class Base<T> implements ISearchParams<T> {
     this.csvWriter = createObjectCsvWriter({
       path: filePath(`${this.filename}_${date}.csv`),
       append: true,
+      alwaysQuote: true,
       header: [
-        {id: 'jobTitle', title: 'Job Title'},
-        {id: 'companyName', title: 'Company Name'},
-        {id: 'jobLocation', title: 'Job Location'},
-        {id: 'jobInfo', title: 'job info'},
-        {id: 'componyInfo', title: 'compony info'},
-        {id: 'jobUrl', title: 'job apply url'},
-        {id: 'jobDescription', title: 'job Description'}
+        { id: 'jobTitle', title: 'Job Title' },
+        { id: 'companyName', title: 'Company Name' },
+        { id: 'jobLocation', title: 'Job Location' },
+        { id: 'jobInfo', title: 'job info' },
+        { id: 'componyInfo', title: 'compony info' },
+        { id: 'jobUrl', title: 'job apply url' },
+        { id: 'jobDescription', title: 'job Description' }
       ]
     });
   }
@@ -98,7 +99,8 @@ export default class Base<T> implements ISearchParams<T> {
     await this.checkParams();
     this.browser = await puppeteer.launch({
       headless: process.env.NODE_ENV === 'production',
-      args: ['--start-maximized', '--disable-web-security'] }
+      args: ['--start-maximized', '--disable-web-security']
+    }
     );
     this.page = await this.browser.newPage();
     await this.page.setViewport({ width: 1366, height: 768 });
@@ -112,7 +114,7 @@ export default class Base<T> implements ISearchParams<T> {
   async saveJobs(jobLists: ISearchResult[]) {
     // write jobs to csv file
     await this.csvWriter.writeRecords(jobLists)
-    .then(() => console.log('\x1b[1m\x1b[34m', 'Data has been written into CSV file successfully', '\x1b[0m'));
+      .then(() => console.log('\x1b[1m\x1b[34m', 'Data has been written into CSV file successfully', '\x1b[0m'));
   }
 
   sendJobsEmail({ subject, to }: { subject: string, to?: string }) {
@@ -132,7 +134,7 @@ export default class Base<T> implements ISearchParams<T> {
       //   }
       // ]
     };
-  
+
     // send mail with defined transport object
     this.nodemailerIns.sendMail(mailOptions, (error: Error, info: { response: string; }) => {
       if (error) {

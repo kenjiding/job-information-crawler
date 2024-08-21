@@ -7,6 +7,7 @@
     "prepare": "husky install",
     "build": "cross-env NODE_ENV=production npx tsc",
     "start": "cross-env NODE_ENV=development nodemon",
+    "server": "cross-env NODE_ENV=production ts-node src/server/index.ts",
     "test": "cross-env NODE_ENV=production ts-node src/index.ts",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint --config eslint.config.js src/",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint --config eslint.config.js --ext .js,.ts src --fix"
@@ -19,15 +20,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/express": "^4.17.21",
+    "cors": "^2.8.5",
     "csv-writer": "^1.6.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
+    "express": "^4.19.2",
     "mysql2": "^3.6.3",
     "nodemailer": "^6.9.13",
     "pubsub-js": "^1.9.4",
     "puppeteer": "^21.5.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/node": "^20.12.7",
     "@types/nodemailer": "^6.4.14",
     "@types/pubsub-js": "^1.8.6",

@@ -26,6 +26,8 @@ jobs:
       run: |
         echo "LINKEDIN_EMAIL=${{ secrets.ACCOUNT_NAME }}" >> $GITHUB_ENV
         echo "LINKEDIN_PASSWORD=${{ secrets.ACCOUNT_PW }}" >> $GITHUB_ENV
+        echo "SEEK_EMAIL=${{ secrets.ACCOUNT_NAME }}" >> $GITHUB_ENV
+        echo "SEEK_PASSWORD=${{ secrets.ACCOUNT_PW }}" >> $GITHUB_ENV
 
     - name: Run script and check for success
       run: pnpm run test
