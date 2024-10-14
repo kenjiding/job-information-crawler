@@ -7,6 +7,7 @@
     "prepare": "husky install",
     "build": "cross-env NODE_ENV=production npx tsc",
     "start": "cross-env NODE_ENV=development nodemon",
+    "starts": "cross-env NODE_ENV=development ts-node ./src/index.ts",
     "server": "cross-env NODE_ENV=production ts-node src/server/index.ts",
     "test": "cross-env NODE_ENV=production ts-node src/index.ts",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint --config eslint.config.js src/",

@@ -57,7 +57,7 @@ class Http {
           statusText: errorData.message,
         });
       }
-      return response.json().then(data => data.data);
+      return response.json().then(data => data);
     });
   }
 

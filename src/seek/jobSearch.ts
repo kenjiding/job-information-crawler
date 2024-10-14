@@ -38,7 +38,7 @@ class JobSearch implements IJobSearch {
     this.titleIncludes = titleIncludes || '';
     this.ignores = ignores || [];
     this.pages = pages || 1;
-    this.filter = filter || { timeRange: ''};
+    this.filter = filter || { timeRange: '0' };
   }
 
   // grabJobInfo function to get the job details
@@ -53,7 +53,7 @@ class JobSearch implements IJobSearch {
       await this.page.waitForSelector('h1[data-automation="job-detail-title"]');
       const isApply = await this.page.$('#applied');
       // if you have applied for this job, continue to the next job
-      if (this.filterAlreadyApply &&isApply) continue;
+      if (this.filterAlreadyApply && isApply) continue;
       const details: ISearchResult | null = await this.page.evaluate((titleIncludes: string, ignores: string[]) => {
         const jobTitle = (document.querySelector('h1[data-automation="job-detail-title"]') as HTMLElement)?.innerText;
         const jobLocation = (document.querySelector('span[data-automation="job-detail-location"]') as HTMLElement)?.innerText;
@@ -61,7 +61,7 @@ class JobSearch implements IJobSearch {
         const jobType = (document.querySelector('span[data-automation="job-detail-work-type"]') as HTMLElement)?.innerText;
         const companyName = (document.querySelector('span[data-automation="advertiser-name"]') as HTMLElement)?.innerText;
         const jobDescription = (document.querySelector('div[data-automation="jobAdDetails"]') as HTMLElement)?.innerText;
-        
+
         if (ignores.length > 0) {
           const regex = new RegExp(ignores.join('|'), 'gi');
           // if the job description contains any of the ignore words, skip this job
@@ -86,7 +86,7 @@ class JobSearch implements IJobSearch {
           return data;
         }
       }, this.titleIncludes, this.ignores);
-      details && results.push({ ...details, jobUrl: this.page.url()});
+      details && results.push({ ...details, jobUrl: this.page.url() });
     }
 
     return results;
@@ -97,33 +97,58 @@ class JobSearch implements IJobSearch {
     await this.page.type('#keywords-input', this.keywords);
     await wait();
     await this.page.type('#SearchBar__Where', this.location);
-    await this.page.waitForSelector('button[data-automation="moreOptionsButton"]');
-    const moreOptionsButton = await this.page.$('button[data-automation="moreOptionsButton"]');
-    // 这里连续触发两次click是因为需要把#SearchBar__Where得出现的下拉框隐藏起来，不然触发filter选项会无效
-    await moreOptionsButton?.click();
-    await moreOptionsButton?.click();
-    await this.page.waitForSelector('#RefineBar--DateListed');
-    const dateFilterDom = await this.page.$('#RefineBar--DateListed');
-    await dateFilterDom?.click();
-    await this.page.waitForSelector('#RefineDateListed__radiogroup ul');
     if (this.filter.timeRange) {
-      await wait();
-      const timeRange = TimeRangeMap[this.filter.timeRange];
-      const dateListItem = await this.page.$(`#RefineDateListed__radiogroup ul li a[aria-label="${timeRange}"]`);
-      try {
-        await dateListItem?.click();
-      } catch (error) {
-        console.warn('error: seek timePostedRange click failed');
+      let moreOptionsButton = await this.page.$('button[data-automation="moreOptionsButton"]');
+      if (moreOptionsButton) {
+        // 这里连续触发两次click是因为需要把#SearchBar__Where得出现的下拉框隐藏起来，不然触发filter选项会无效
+        await moreOptionsButton?.click();
+        await moreOptionsButton?.click();
+      } else {
+        moreOptionsButton = await this.page.$('button[data-automation="secondaryFilterButton"]');
+        console.log('moreOptionsButton: ', 1);
+        await moreOptionsButton?.click();
       }
+      console.log('moreOptionsButton: ', 2);
+
+      await wait();
+      const element = await this.page.$(`input[name="listingTime-rg1"][value="${this.filter.timeRange}"]`);
+      console.log('moreOptionsButton: ', 3);
+
+      element?.click();
+      const fButton = await this.page.$('a[data-automation="secondary-filter-seek-button"]');
+      console.log('moreOptionsButton: ', 4);
+
+      fButton?.click();
+    } else {
+      const searchButton = await this.page.$('#searchButton');
+      searchButton?.click();
     }
-    await this.page.click('button[type="submit"]');
+    console.log('moreOptionsButton: ', 5);
+
+    // await this.page.waitForSelector('#RefineBar--DateListed');
+    // const dateFilterDom = await this.page.$('#RefineBar--DateListed');
+    // await dateFilterDom?.click();
+    // await this.page.waitForSelector('#RefineDateListed__radiogroup ul');
+    // if (this.filter.timeRange) {
+    //   await wait();
+    //   const timeRange = TimeRangeMap[this.filter.timeRange];
+    //   const dateListItem = await this.page.$(`#RefineDateListed__radiogroup ul li a[aria-label="${timeRange}"]`);
+    //   try {
+    //     await dateListItem?.click();
+    //   } catch (error) {
+    //     console.warn('error: seek timePostedRange click failed');
+    //   }
+    // }
+    // await this.page.click('button[type="submit"]');
+    await wait();
+    console.log('wait: ', 1);
     await this.nextpage(cb);
   }
 
   // nextpage function to get all the job details
   async nextpage(cb: ISearchResultCallback) {
     let curPage = 1;
-    while(curPage <= this.pages) {
+    while (curPage <= this.pages) {
       const res = await this.grabJobInfo();
       cb && cb(res);
       const nextLink = await this.page.$('a[title="Next"][aria-label="Next"]');
@@ -132,6 +157,7 @@ class JobSearch implements IJobSearch {
       await wait(1000);
       curPage++;
     }
+    cb && cb([], true);
   }
 }
 

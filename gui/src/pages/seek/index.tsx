@@ -29,11 +29,11 @@ const App: React.FC = () => {
     navigate('/seek/' + e.key);
   };
 
-  return <div>
-    <div>
+  return <div className='h-full flex flex-col'>
+    <div className=''>
       <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
     </div>
-    <div className='pt-5 pb-5'>
+    <div className='pt-5 pb-5 flex-1 overflow-auto'>
       <Outlet />
     </div>
   </div>

@@ -1,35 +1,55 @@
 import express, { Request, Response } from 'express';
-import { exec } from 'child_process';
-import path from 'path';
 import cors from 'cors';
+import Seek from '../seek';
+import setEnv from '../setEnv';
+import dotenv from 'dotenv';
 
-const projectRoot = path.resolve(__dirname, '../../');
-
+dotenv.config({ path: '.env.local' });
 const app = express();
 const port = 8080;
 
 app.use(express.json());
 app.use(cors());
 
-app.post('/add-job', (req: Request, res: Response) => {
-  const scriptName: string = req.body.scriptName;
+app.post('/add-job', async (req: Request, res: Response) => {
+  const {
+    scriptName,
+    keywords,
+    location,
+    ignores = [],
+    titleIncludes,
+    pages,
+  }: any = req.body;
 
   if (!scriptName) {
     return res.status(400).send('Script name is required');
   }
-
-  exec(`npm run ${scriptName}`, { cwd: projectRoot }, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing script: ${error}`);
-      return res.status(500).send(`Error executing script: ${error.message}`);
+  try {
+    if (scriptName === 'seek-search') {
+      await new Seek({
+        username: process.env.SEEK_EMAIL!,
+        password: process.env.SEEK_PASSWORD!,
+        keywords,
+        location,
+        titleIncludes,
+        ignores,
+        filter: {
+          // 3天内的职位
+          timeRange: '3'
+        },
+        pages,
+      }).run((data) => {
+        console.log('data: ', data);
+        res.send({
+          code: 200,
+          data,
+        });
+      });
     }
-    if (stderr) {
-      console.error(`stderr: ${stderr}`);
-      return res.status(500).send(stderr);
-    }
-    console.log(`stdout: ${stdout}`);
-    res.send(`Script executed successfully: ${stdout}`);
-  });
+    // res.send(`Script executed successfully`);
+  } catch (err) {
+    res.status(500).send(`Error executing script: ${err}`);
+  }
 });
 
 app.listen(port, () => {

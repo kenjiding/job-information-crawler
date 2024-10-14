@@ -2,8 +2,8 @@ export type OptionalSearchParams<T> = {
   [K in keyof T]?: T[K];
 };
 
-type AtLeastOne<T, Keys extends keyof T = keyof T> = 
-  Pick<T, Exclude<keyof T, Keys>> & 
+type AtLeastOne<T, Keys extends keyof T = keyof T> =
+  Pick<T, Exclude<keyof T, Keys>> &
   { [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>> }[Keys];
 
 interface IOptions {
@@ -19,7 +19,7 @@ export interface Ifilter<T> {
 }
 
 export type LinkedinSearchTimeFilter = '' | 'month' | 'week' | 'day';
-export type SeekSearchTimeFilter = '' | 'Today' | '3' | '7' | '14' | '30';
+export type SeekSearchTimeFilter = '0' | '1' | '3' | '7' | '14' | '30';
 export interface ISearchParams<T> {
   username: string;
   password: string;
@@ -45,4 +45,4 @@ export interface ISearchResult {
   jobUrl: string;
 }
 
-export type ISearchResultCallback = (searchRes: ISearchResult[]) => void;
+export type ISearchResultCallback = (searchRes: ISearchResult[], isFinised?: boolean) => void;

@@ -32,7 +32,7 @@ export default class Seek extends Base<SeekSearchTimeFilter> {
     });
   }
 
-  async run() {
+  async run(cb?: (res: any) => void) {
     await this.start();
     await new Login({
       page: this.page,
@@ -50,6 +50,7 @@ export default class Seek extends Base<SeekSearchTimeFilter> {
       pages: this.pages,
       filterAlreadyApply: this.filterAlreadyApply,
     }).search((res) => {
+      cb && cb(res);
       this.tempJobsData.push(...res);
       // write jobs to csv file
       this.saveJobs(res);
