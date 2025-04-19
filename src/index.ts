@@ -5,7 +5,7 @@
  * start.seak(...).linkedin(...);
  * start.linkedin(...).seek(...);
  * start.linkedin(...);
- * start.seek(...);
+ * start.seek(...); 
 */
 /**
  * @param {string} username - LinkedIn username
@@ -19,17 +19,15 @@
  */
 import start from './start';
 
-start.seak({
-  keywords: 'Developer',
+start.linkedin({
+  keywords: 'full stack',
   location: 'Melbourne',
-  // 只保存出标题中含有 front 关键字的职位, 多个关键由 | 隔开， 例如 front | full stack
-  // titleIncludes: 'front',
+  // titleIncludes: 'full stack',
   ignores: ['citizen'],
-  // 开启邮箱推送
   enableSendEmail: false,
-  filter: {
-    // 3天内的职位
-    timeRange: '3'
-  },
   pages: 1,
+  // Only save jobs whose titles contain the keyword "front".  
+  // For multiple keywords, separate them with `|`, e.g., `front | full stack`.
+  // titleIncludes: 'full stack',
+  // enable Email: true,
 });

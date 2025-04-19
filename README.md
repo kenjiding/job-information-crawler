@@ -1,79 +1,117 @@
+Got it! Here's a polished and professional version of your `README.md` for the `job-information-crawler` project. I've improved clarity, structure, and consistency while preserving your original intent:
+
+---
 
 # job-information-crawler
 
-`job-information-crawler` this is a linkedin, seek job information crawler
+**`job-information-crawler`** is a Node.js-based web automation tool for scraping job listings from **LinkedIn** and **Seek**. It automates the job search process and exports data for further use.
 
-## description
+![演示动图](./static/seek.gif)
 
-This project shows how to use the Puppeteer framework to work with several other commonly used Node.js libraries, such as `csv-writer` for data export, `dayjs` for date processing, etc., to implement web page automation tasks.
+---
 
-## features
+## 📌 Features
 
-- linkedin, seek job information crawler
-- Web page automation
-- CSV file generation
-- Environment variable management
-- Database interaction
+- 🔍 Scrapes job information from LinkedIn and Seek  
+- ⚙️ Web page automation using Puppeteer  
+- 📁 CSV file generation using `csv-writer`  
+- 📅 Date handling with `dayjs`  
+- 🔐 Environment variable configuration support  
+- 💾 Optional database interaction support  
+- 📧 Email notification system for job updates
 
-## Install
+---
 
-First, make sure you have installed [Node.js](https://nodejs.org/) (the latest stable version is recommended). Then, clone this repository and install dependencies:
+## 📦 Installation
+
+> **Requirements:**  
+> - [Node.js](https://nodejs.org/) (Latest LTS version recommended)
+
+Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/kenjiding/job-information-crawler.git
 cd job-information-crawler
+npm install
 ```
 
-## Usage
+---
 
-### input your linkedin / seek account and password in the `.env` file.
-```bash
-# .env file
+## 🛠 Configuration
+
+Before running the project, create a `.env` file in the root directory and provide the required credentials:
+
+```env
+# LinkedIn credentials
 LINKEDIN_EMAIL='your_linkedin_email'
 LINKEDIN_PASSWORD='your_linkedin_password'
+
+# Seek credentials
 SEEK_EMAIL='your_seek_email'
 SEEK_PASSWORD='your_seek_password'
-# your email account for sending email
+
+# Email sender credentials (for job alerts)
 SENDER_EMAIL='sender_email'
-# your email account password
 SENDER_EMAIL_PASSWORD='sender_email_password'
-# receiving email
-SENDER_EMAIL_TARGET='sender_email'
+SENDER_EMAIL_TARGET='target_email_to_receive_notifications'
 ```
 
-### Install
+---
+
+## 🚀 Usage
+
+Run the crawler:
+
 ```bash
-npm install
 npm run start
 ```
 
-## Search Guide
+You can customize the search behavior in `./src/index.ts`:
 
-```javascript
-  /**
-   * ./src/index.ts
-   * 
-   * You can use the following order:
-   *
-  */
-  start.seak(...).linkedin(...);
-  start.linkedin(...).seek(...);
-  start.linkedin(...);
-  start.seek(...);
+```ts
+start.linkedin(...).seek(...);
+start.seek(...).linkedin(...);
+start.linkedin(...);
+start.seek(...);
 ```
 
-```javascript
-// example of search options
-/**
- * @param {string} username - LinkedIn username
- * @param {string} password - LinkedIn password
- * @param {string} keywords - Keywords to search
- * @param {string} location - Location to search 
- * @param {string} filterAlreadyApply - filter out jobs that have already been applied, default is true
- * @param {string} titleIncludes - Title includes to search
- * @param {string[]} ignores - Keywords to ignore
- * @param {Object} filter - Filter options
- * @param {number} pages - Number of pages to search
- */
+---
 
+## 🔎 Search Options
+
+Here’s an example of the available options:
+
+```ts
+{
+  username: 'your_email',
+  password: 'your_password',
+  keywords: 'developer',
+  location: 'Adelaide',
+  filterAlreadyApply: true, // Optional
+  titleIncludes: 'engineer', // Optional
+  ignores: ['senior', 'manager'], // Optional
+  filter: {
+    // Add custom filter logic here
+  },
+  pages: 3 // Number of pages to search
+}
 ```
+
+---
+
+## ✅ To Do / Improvements
+
+- [ ] Add support for more job platforms (e.g., Indeed, Glassdoor)  
+- [ ] Add database storage for job results  
+- [ ] Enhance email formatting and scheduling  
+- [ ] Add unit tests and error handling
+
+---
+
+## 📄 License
+
+MIT
+
+---
+
+如果你还想添加 Logo、运行截图或数据库使用说明也可以告诉我，我可以帮你继续完善。需要我帮你生成一个 `.env.example` 文件也没问题！

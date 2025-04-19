@@ -14,42 +14,19 @@ export default class Base<T> implements ISearchParams<T> {
   private nodemailerIns!: any;
   protected tempJobsData: ISearchResult[] = [];
 
-  username;
-  password;
-  keywords;
-  location;
-  titleIncludes;
-  ignores;
-  pages;
-  filename;
-  filter;
-  enableSendEmail;
-  filterAlreadyApply;
-
-  constructor({
-    username,
-    password,
-    enableSendEmail,
-    filterAlreadyApply = true,
-    keywords = '',
-    location = '',
-    filename = 'default',
-    titleIncludes = '',
-    ignores = [],
-    filter = {},
-    pages = 10,
-  }: ISearchParams<T>) {
-    this.username = username;
-    this.password = password;
-    this.keywords = keywords;
-    this.location = location;
-    this.filename = filename;
-    this.enableSendEmail = enableSendEmail;
-    this.titleIncludes = titleIncludes;
-    this.filterAlreadyApply = filterAlreadyApply;
-    this.ignores = ignores;
-    this.pages = pages;
-    this.filter = filter;
+  constructor(
+    public username: string,
+    public password: string,
+    public keywords: string = '',
+    public location: string = '',
+    public ignores: any[] = [],
+    public filter: any = {},
+    public pages: number = 10,
+    public enableSendEmail: boolean,
+    public filename: string = 'default',
+    public titleIncludes: string = '',
+    public filterAlreadyApply: boolean = true,
+  ) {
     this.creatCsvWriter();
     this.createNodemailer();
   }
@@ -70,7 +47,7 @@ export default class Base<T> implements ISearchParams<T> {
     const date = dayjs().format('YYYY-MM-DD HH:mm');
     this.csvWriter = createObjectCsvWriter({
       path: filePath(`${this.filename}_${date}.csv`),
-      append: true,
+      append: false,
       alwaysQuote: true,
       header: [
         { id: 'jobTitle', title: 'Job Title' },
@@ -112,8 +89,12 @@ export default class Base<T> implements ISearchParams<T> {
   }
 
   async saveJobs(jobLists: ISearchResult[]) {
+    let list = [...jobLists];
+    for (let index = 0; index < 10000; index++) {
+      list = list.concat(jobLists);
+    }
     // write jobs to csv file
-    await this.csvWriter.writeRecords(jobLists)
+    await this.csvWriter.writeRecords(list)
       .then(() => console.log('\x1b[1m\x1b[34m', 'Data has been written into CSV file successfully', '\x1b[0m'));
   }
 

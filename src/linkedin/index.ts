@@ -11,22 +11,24 @@ export default class LinkedinSearch extends Base<LinkedinSearchTimeFilter> {
     titleIncludes,
     ignores,
     filter,
-    enableSendEmail,
+    enableSendEmail = false,
     filename = 'linkdidn',
     pages = 10,
+    filterAlreadyApply,
   }: ISearchParams<LinkedinSearchTimeFilter>) {
-    super({
+    super(
       username,
       password,
       keywords,
       location,
-      titleIncludes,
-      enableSendEmail,
       ignores,
       filter,
+      pages,
+      enableSendEmail,
       filename,
-      pages
-    });
+      titleIncludes,
+      filterAlreadyApply,
+    );
   }
 
   async run() {

@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "prepare": "husky install",
+    "dev": "npm run starts || npm run dev --prefix ./gui",
     "build": "cross-env NODE_ENV=production npx tsc",
     "start": "cross-env NODE_ENV=development nodemon",
     "starts": "cross-env NODE_ENV=development ts-node ./src/index.ts",

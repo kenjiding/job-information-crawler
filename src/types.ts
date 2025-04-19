@@ -19,7 +19,7 @@ export interface Ifilter<T> {
 }
 
 export type LinkedinSearchTimeFilter = '' | 'month' | 'week' | 'day';
-export type SeekSearchTimeFilter = '0' | '1' | '3' | '7' | '14' | '30';
+export type SeekSearchTimeFilter = '' | 'Today' | '3' | '7' | '14' | '30';
 export interface ISearchParams<T> {
   username: string;
   password: string;

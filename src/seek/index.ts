@@ -12,24 +12,23 @@ export default class Seek extends Base<SeekSearchTimeFilter> {
     filename = 'seek',
     titleIncludes,
     ignores,
-    enableSendEmail,
+    enableSendEmail = false,
     filterAlreadyApply,
     filter,
     pages = 10,
   }: ISearchParams<SeekSearchTimeFilter>) {
-    super({
+    super(
       username,
       password,
       keywords,
       location,
-      titleIncludes,
-      enableSendEmail,
       ignores,
-      filename,
-      filterAlreadyApply,
       filter,
-      pages
-    });
+      pages,
+      enableSendEmail,
+      filename,
+      titleIncludes,
+    );
   }
 
   async run(cb?: (res: any) => void) {

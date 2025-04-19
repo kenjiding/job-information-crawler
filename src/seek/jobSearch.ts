@@ -38,7 +38,7 @@ class JobSearch implements IJobSearch {
     this.titleIncludes = titleIncludes || '';
     this.ignores = ignores || [];
     this.pages = pages || 1;
-    this.filter = filter || { timeRange: '0' };
+    this.filter = filter || { timeRange: '' };
   }
 
   // grabJobInfo function to get the job details
